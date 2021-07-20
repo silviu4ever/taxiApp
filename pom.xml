@@ -44,21 +44,7 @@
 			<version>1.5.0</version>
 		</dependency>
 		<!-- swagger for api documentation and rest client generation -->
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-boot-starter</artifactId>
-			<version>${swagger.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-data-rest</artifactId>
-			<version>${swagger.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>${swagger.version}</version>
-		</dependency>
+
 		<dependency>
 			<groupId>com.oracle.database.jdbc</groupId>
 			<artifactId>ojdbc8</artifactId>
@@ -74,6 +60,32 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>eu.europa.ec.digit.iam.ecas.client</groupId>
+			<artifactId>ecas-tomcat-8.0</artifactId>
+			<version>4.36.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>eu.europa.ec.oib.platform</groupId>
+			<artifactId>platform-data</artifactId>
+			<version>10.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>eu.europa.ec.oib.platform</groupId>
+			<artifactId>platform-web</artifactId>
+			<version>10.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>eu.europa.ec.oib.platform.security</groupId>
+			<artifactId>security-core-impl</artifactId>
+			<version>10.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>eu.europa.ec.oib.platform.security</groupId>
+			<artifactId>security-manager-impl</artifactId>
+			<version>10.0.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -88,6 +100,50 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>4.2.0</version>
+				<configuration>
+					<locations>
+						<location>filesystem:database/scripts</location>
+
+					</locations>
+					<configFile>flyway-configuration.properties</configFile>
+					<outOfOrder>true</outOfOrder>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.oracle.jdbc</groupId>
+						<artifactId>ojdbc8</artifactId>
+						<version>12.2.0.1</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>sql-maven-plugin</artifactId>
+				<version>1.5</version>
+				<configuration>
+					<autocommit>true</autocommit>
+					<srcFiles>
+						<srcFile>database/definition/CREATE_USER.sql</srcFile>
+					</srcFiles>
+					<onError>continue</onError>
+					<driver>oracle.jdbc.OracleDriver</driver>
+					<url>jdbc:oracle:thin:@localhost:1521:xe</url>
+					<username>system</username>
+					<password>oracle</password>
+					<skip>${maven.test.skip}</skip>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.oracle.jdbc</groupId>
+						<artifactId>ojdbc8</artifactId>
+						<version>12.2.0.1</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
